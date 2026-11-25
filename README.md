@@ -6,6 +6,7 @@
 
 **midsave pulls the plug on your app hundreds of times and tells you exactly when your data breaks.**
 
+![CI](https://github.com/sharanyashetty013-droid/midsave/actions/workflows/ci.yml/badge.svg)
 ![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)
 ![Windows](https://img.shields.io/badge/Windows-supported-0078D6?logo=windows&logoColor=white)
 ![macOS](https://img.shields.io/badge/macOS-supported-000000?logo=apple&logoColor=white)
