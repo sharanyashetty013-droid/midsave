@@ -60,5 +60,6 @@ func main() {
 	fmt.Printf("\n%d of %d runs lost or broke data\n", failed, *runs)
 	if failed > 0 {
 		fmt.Printf("replay these exact crash times with: --seed %d\n", *seed)
+		os.Exit(1)
 	}
 }

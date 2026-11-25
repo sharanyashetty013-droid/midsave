@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: |
+          EXT=""
+          if [ "$RUNNER_OS" = "Windows" ]; then EXT=".exe"; fi
+          echo "EXT=$EXT" >> $GITHUB_ENV
+          go build -o bin/midsave$EXT ./cmd/midsave
+          go build -o bin/writer$EXT ./examples/writer
+          go build -o bin/badwriter$EXT ./examples/badwriter
+          go build -o bin/check$EXT ./examples/check
+
+      - name: Safe app should pass
+        run: bin/midsave$EXT --app bin/writer$EXT --check bin/check$EXT --clean data.txt --runs 5
+
+      - name: Buggy app should be caught
+        run: |
+          if bin/midsave$EXT --app bin/badwriter$EXT --check bin/check$EXT --clean data.txt --runs 10; then
+            echo "midsave did not catch the buggy app"
+            exit 1
+          fi
