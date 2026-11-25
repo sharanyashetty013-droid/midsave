@@ -56,15 +56,15 @@ run 10: ok
 
 ```
 run 1:  ok
-run 2:  BROKEN (killed after 1.803s)
-run 3:  BROKEN (killed after 1.169s)
+run 2:  BROKEN
+run 3:  BROKEN
 run 4:  ok
-run 5:  BROKEN (killed after 2.157s)
-run 6:  BROKEN (killed after 1.006s)
+run 5:  BROKEN
+run 6:  BROKEN
 run 7:  ok
-run 8:  BROKEN (killed after 1.945s)
-run 9:  BROKEN (killed after 1.207s)
-run 10: BROKEN (killed after 1.378s)
+run 8:  BROKEN
+run 9:  BROKEN
+run 10: BROKEN
 
 7 of 10 runs lost or broke data
 ```
@@ -73,7 +73,18 @@ run 10: BROKEN (killed after 1.378s)
 </tr>
 </table>
 
-The buggy app writes each number in two steps. Kill it in between and you get **half a number** on disk: a *torn write*. midsave found it 7 times out of 10.
+The buggy app writes each number in two steps. Kill it in between and you get **half a number** on disk: a *torn write*.
+
+midsave also tells you **exactly where** it broke, and how to replay it:
+
+```
+seed: 42
+run 2: BROKEN (killed after 1.187s): BROKEN at line 24 found: 2
+
+replay these exact crash times with: --seed 42
+```
+
+The app was writing `24`, but only the `2` reached the disk.
 
 ## How it works
 
@@ -121,6 +132,7 @@ go run ./cmd/midsave --app bin/badwriter.exe --check bin/check.exe --clean data.
 | `--check` | the program that checks the data | required |
 | `--clean` | file to delete before each run | none |
 | `--runs` | how many times to crash it | `10` |
+| `--seed` | replay the exact same crash times | random |
 
 ## Doesn't this already exist?
 
@@ -146,8 +158,8 @@ Simulating a true power cut is on the roadmap.
 
 ## Roadmap
 
-- [ ] `--seed` to replay any crash exactly
-- [ ] report *which* line broke and why
+- [x] `--seed` to replay any crash exactly
+- [x] report *which* line broke and why
 - [ ] JSON output
 - [ ] GitHub Action to crash-test on every push
 - [ ] SQLite + Postgres examples
