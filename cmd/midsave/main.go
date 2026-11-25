@@ -14,23 +14,30 @@ func main() {
 	check := flag.String("check", "", "program that checks the data")
 	clean := flag.String("clean", "", "file to delete before each run")
 	runs := flag.Int("runs", 10, "how many times to crash it")
+	seed := flag.Int64("seed", 0, "random seed to replay a run (0 = pick a new one)")
 	flag.Parse()
 	if *app == "" || *check == "" {
-		fmt.Println("usage: midsave --app <program> --check <checker> [--clean <file>] [--runs N]")
+		fmt.Println("usage: midsave --app <program> --check <checker> [--clean <file>] [--runs N] [--seed N]")
 		os.Exit(2)
 	}
+
+	if *seed == 0 {
+		*seed = time.Now().UnixNano()
+	}
+	rng := rand.New(rand.NewSource(*seed))
+	fmt.Println("seed:", *seed)
 
 	failed := 0
 	for i := 1; i <= *runs; i++ {
 		os.Remove(*clean) // fresh start each run
 
 		cmd := exec.Command(*app)
-		if err := cmd.Start(); err != nil {
+		if err := cmd.Start(); err != nil { // 1. start the app
 			fmt.Println("could not start app:", err)
 			os.Exit(1)
 		}
 
-		wait := time.Duration(200+rand.Intn(2000)) * time.Millisecond
+		wait := time.Duration(200+rng.Intn(2000)) * time.Millisecond
 		time.Sleep(wait) // 2. wait a random time
 
 		cmd.Process.Kill() // 3. kill it
@@ -48,4 +55,7 @@ func main() {
 		}
 	}
 	fmt.Printf("\n%d of %d runs lost or broke data\n", failed, *runs)
+	if failed > 0 {
+		fmt.Printf("replay these exact crash times with: --seed %d\n", *seed)
+	}
 }
