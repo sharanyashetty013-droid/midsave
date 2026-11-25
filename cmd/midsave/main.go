@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -43,12 +44,14 @@ func main() {
 		cmd.Process.Kill() // 3. kill it
 		cmd.Wait()
 
-		err := exec.Command(*check).Run() // 4. run the checker
+		out, err := exec.Command(*check).Output() // 4. run the checker, keep what it prints
+		msg := strings.TrimSpace(string(out))
+
 		if err == nil {
 			fmt.Printf("run %d: ok\n", i)
 		} else if _, ok := err.(*exec.ExitError); ok {
 			failed++
-			fmt.Printf("run %d: BROKEN (killed after %v)\n", i, wait)
+			fmt.Printf("run %d: BROKEN (killed after %v): %s\n", i, wait, msg)
 		} else {
 			fmt.Println("could not run checker:", err)
 			os.Exit(1)
