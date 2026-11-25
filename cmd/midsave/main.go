@@ -15,13 +15,20 @@ func main() {
 	clean := flag.String("clean", "", "file to delete before each run")
 	runs := flag.Int("runs", 10, "how many times to crash it")
 	flag.Parse()
+	if *app == "" || *check == "" {
+		fmt.Println("usage: midsave --app <program> --check <checker> [--clean <file>] [--runs N]")
+		os.Exit(2)
+	}
 
 	failed := 0
 	for i := 1; i <= *runs; i++ {
 		os.Remove(*clean) // fresh start each run
 
 		cmd := exec.Command(*app)
-		cmd.Start() // 1. start the app
+		if err := cmd.Start(); err != nil {
+			fmt.Println("could not start app:", err)
+			os.Exit(1)
+		}
 
 		wait := time.Duration(200+rand.Intn(2000)) * time.Millisecond
 		time.Sleep(wait) // 2. wait a random time
@@ -30,11 +37,14 @@ func main() {
 		cmd.Wait()
 
 		err := exec.Command(*check).Run() // 4. run the checker
-		if err != nil {
+		if err == nil {
+			fmt.Printf("run %d: ok\n", i)
+		} else if _, ok := err.(*exec.ExitError); ok {
 			failed++
 			fmt.Printf("run %d: BROKEN (killed after %v)\n", i, wait)
 		} else {
-			fmt.Printf("run %d: ok\n", i)
+			fmt.Println("could not run checker:", err)
+			os.Exit(1)
 		}
 	}
 	fmt.Printf("\n%d of %d runs lost or broke data\n", failed, *runs)
