@@ -14,6 +14,8 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4)
 
+![midsave catching a torn write](docs/demo.gif)
+
 </div>
 
 ## The problem
@@ -183,7 +185,7 @@ Simulating a true power cut is on the roadmap.
 
 ## Contributing
 
-New to open source? Issues labelled **`good first issue`** are small, clear and ready to pick up. Every PR gets a reply within a day or two.
+New to open source? Issues labelled **`good first issue`** are small, clear and ready to pick up. Every PR gets a reply within a day or two. See [CONTRIBUTING.md](CONTRIBUTING.md) to get set up.
 
 ## License
 
