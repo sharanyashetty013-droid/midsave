@@ -151,6 +151,7 @@ go run ./cmd/midsave --app bin/badwriter.exe --check bin/check.exe --clean data.
 | `--clean` | file to delete before each run | none |
 | `--runs` | how many times to crash it | `10` |
 | `--seed` | replay the exact same crash times | random |
+| `--version` | print the version and exit | |
 
 ## Doesn't this already exist?
 

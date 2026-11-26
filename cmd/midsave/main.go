@@ -6,9 +6,27 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"runtime/debug"
 	"strings"
 	"time"
 )
+
+// version is set at release time by GoReleaser via
+// -ldflags "-X main.version=...".
+var version = "dev"
+
+// currentVersion returns the build-time version. Without one, it falls back
+// to the version Go records in the binary (e.g. from `go install ...@v0.1.0`),
+// and finally to "dev".
+func currentVersion() string {
+	if version != "dev" {
+		return version
+	}
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return strings.TrimPrefix(info.Main.Version, "v")
+	}
+	return version
+}
 
 func main() {
 	app := flag.String("app", "", "app to crash-test")
@@ -16,9 +34,14 @@ func main() {
 	clean := flag.String("clean", "", "file to delete before each run")
 	runs := flag.Int("runs", 10, "how many times to crash it")
 	seed := flag.Int64("seed", 0, "random seed to replay a run (0 = pick a new one)")
+	showVersion := flag.Bool("version", false, "print the version and exit")
 	flag.Parse()
+	if *showVersion {
+		fmt.Println("midsave", currentVersion())
+		return
+	}
 	if *app == "" || *check == "" {
-		fmt.Println("usage: midsave --app <program> --check <checker> [--clean <file>] [--runs N] [--seed N]")
+		fmt.Println("usage: midsave --app <program> --check <checker> [--clean <file>] [--runs N] [--seed N] [--version]")
 		os.Exit(2)
 	}
 

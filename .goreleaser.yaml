@@ -3,6 +3,8 @@ version: 2
 builds:
   - main: ./cmd/midsave
     binary: midsave
+    ldflags:
+      - -s -w -X main.version={{.Version}}
     env:
       - CGO_ENABLED=0
     goos: [windows, linux, darwin]
