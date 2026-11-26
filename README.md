@@ -113,6 +113,21 @@ The app was writing `24`, but only the `2` reached the disk.
 
 You bring a **checker**: any program that exits `0` if the data is fine, and anything else if it's broken. Only you know what "correct" means for your app, so you decide.
 
+## Download
+
+Grab the latest version from the [Releases page](https://github.com/sharanyashetty013-droid/midsave/releases/latest):
+
+| Your computer | Download |
+|---|---|
+| Windows (most PCs) | `midsave_x.x.x_windows_amd64.zip` |
+| Mac (Apple M1/M2/M3) | `midsave_x.x.x_darwin_arm64.tar.gz` |
+| Mac (Intel) | `midsave_x.x.x_darwin_amd64.tar.gz` |
+| Linux | `midsave_x.x.x_linux_amd64.tar.gz` |
+
+Unzip it and run `midsave --app <your app> --check <your checker>`.
+
+> **Note:** midsave isn't code-signed yet, so Windows may show "Windows protected your PC". Click **More info → Run anyway**. On Mac, right-click → **Open** the first time.
+
 ## Try it in 60 seconds
 
 ```bash
